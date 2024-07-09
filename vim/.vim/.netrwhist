@@ -1,0 +1,6 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =4
+let g:netrw_dirhist_4='/home/vmattos/src/repos/Api01'
+let g:netrw_dirhist_3='/home/vmattos/.vim'
+let g:netrw_dirhist_2='/home/vmattos'
+let g:netrw_dirhist_1='/home/vmattos/dotfiles/vim/.vim/plugged'
