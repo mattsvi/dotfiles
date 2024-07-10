@@ -1,3 +1,4 @@
+"
 " basic setup
 set number
 syntax on
@@ -23,17 +24,11 @@ vnoremap <Right> <Nop>
 " plugins
 call plug#begin('~/.vim/plugged')
 
-"Plug 'OmniSharp/omnisharp-vim'
-"Plug 'sheerun/vim-polyglot'
-"Plug 'dense-analysis/ale'
-"Plug 'ctrlpvim/ctrlp.vim'
-"Plug 'preservim/nerdtree'
-"Plug 'tpope/vim-fugitive'
-"Plug 'majutsushi/tagbar'
-"Plug 'ghifarit53/tokyonight-vim'
-Plug 'mhartington/oceanic-next'
+Plug 'preservim/nerdtree'
 
 call plug#end()
-set termguicolors
 
-colorscheme OceanicNext
+" theme setup 
+set termguicolors
+map <C-o> :NERDTreeToggle<CR>
+
