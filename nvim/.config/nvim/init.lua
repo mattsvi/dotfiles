@@ -5,6 +5,27 @@ local pid = vim.fn.getpid()
 local omnisharp_bin = "/usr/local/bin/omnisharp-roslyn/OmniSharp"
 local opts = {}
 
+-- Setting up the debugger capabilities with dap;
+--
+local dap = require("dap")
+
+dap.adapters.coreclr = {
+  type = "executable",
+  command = "/usr/local/bin/netcoredbg/netcoredbg",
+  args = { "--interpreter=vscode" },
+}
+
+dap.configurations.cs = {
+  {
+    type = "coreclr",
+    name = "launch - netcoredbg",
+    request = "launch",
+    program = function()
+      return vim.fn.input("Path to dll", vim.fn.getcwd() .. "/bin/Debug/", "file")
+    end,
+  },
+}
+
 -- simply add on_attach below cmd declaration in previous snippet
 local on_attach = function(client, bufnr)
   -- Enable completion triggered by <c-x><c-o>
@@ -38,21 +59,23 @@ require("lspconfig").omnisharp.setup({
   on_attach = on_attach,
 })
 
-local dap = require("dap")
+-- Setting up interface
+vim.fn.sign_define("DapBreakpoint", { text = "🛑", texthl = "", linehl = "", numhl = "" })
+vim.fn.sign_define("DapBreakpointCondition", { text = "🟢", texthl = "", linehl = "", numhl = "" })
+vim.fn.sign_define("DapLogPoint", { text = "🔵", texthl = "", linehl = "", numhl = "" })
+vim.fn.sign_define("DapStopped", { text = "➡️", texthl = "", linehl = "", numhl = "" })
 
-dap.adapters.coreclr = {
-  type = "executable",
-  command = "/usr/local/bin/netcoredbg/netcoredbg",
-  args = { "--interpreter=vscode" },
-}
-
-dap.configurations.cs = {
-  {
-    type = "coreclr",
-    name = "launch - netcoredbg",
-    request = "launch",
-    program = function()
-      return vim.fn.input("Path to dll", vim.fn.getcwd() .. "/bin/Debug/", "file")
-    end,
-  },
-}
+-- Setting up C# debugging keys
+vim.keymap.set("n", "<F5>", dap.continue, { silent = true })
+vim.keymap.set("n", "<F10", dap.step_over, { silent = true })
+vim.keymap.set("n", "<F11>", dap.step_into, { silent = true })
+vim.keymap.set("n", "<F12>", dap.step_out, { silent = true })
+vim.keymap.set("n", "<Leader>b", dap.toggle_breakpoint, { silent = true })
+vim.keymap.set("n", "<Leader>B", function()
+  dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
+end, { silent = true })
+vim.keymap.set("n", "<Leader>lp", function()
+  dap.set_breakpoint(nil, nil, vim.fn.input("Log point message: "))
+end, { silent = true })
+vim.keymap.set("n", "<Leader>dr", dap.repl.open, { silent = true })
+vim.keymap.set("n", "<Leader>dl", dap.run_last, { silent = true })
